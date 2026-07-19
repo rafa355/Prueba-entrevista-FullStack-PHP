@@ -13,9 +13,27 @@ class Customer extends Model
     protected $keyType = 'string';
     public $timestamps = false;
 
+    protected $fillable = [
+        'dni',
+        'id_reg',
+        'id_com',
+        'email',
+        'password',
+        'name',
+        'last_name',
+        'address',
+        'date_reg',
+        'status',
+    ];
+
+    protected $hidden = [
+        'password',
+    ];
+
     protected function casts(): array
     {
         return [
+            'password' => 'hashed',
             'date_reg' => 'datetime',
             'status' => 'string',
         ];
