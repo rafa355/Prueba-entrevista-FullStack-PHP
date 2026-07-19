@@ -13,7 +13,9 @@ API RESTful para gestión de clientes construida con **Laravel 13.8** y **PHP 8.
 - [Servicios disponibles](#servicios-disponibles)
 - [Middlewares](#middlewares)
 - [Autenticación](#autenticación)
+- [API Tester](#api-tester)
 - [Ejemplos de uso](#ejemplos-de-uso)
+- [Estructura del proyecto](#estructura-del-proyecto)
 
 ---
 
@@ -166,9 +168,12 @@ DB_PASSWORD=root
 | Método | Endpoint | Descripción | Autenticación |
 |--------|----------|-------------|---------------|
 | `POST` | `/api/login` | Login y generación de token | No |
+| `GET` | `/api/regions` | Obtener regiones con comunas asociadas | Sí (Bearer token) |
 | `POST` | `/api/customers` | Registrar cliente | Sí (Bearer token) |
 | `GET` | `/api/customers` | Consultar cliente | Sí (Bearer token) |
 | `DELETE` | `/api/customers/{dni}` | Eliminar cliente (lógico) | Sí (Bearer token) |
+
+> **Nota:** El endpoint `GET /api/regions` retorna todas las regiones activas con sus comunas asociadas. Esta información es necesaria para obtener los `id_reg` e `id_com` válidos al momento de crear un cliente.
 
 > **Métodos permitidos:** Solo `POST`, `GET` y `DELETE`. Cualquier otro método retorna `405 Method Not Allowed`.
 
@@ -188,9 +193,14 @@ DB_PASSWORD=root
 | Middleware | Ruta | Función |
 |------------|------|---------|
 | `TokenMiddleware` | Todas excepto `/api/login` | Valida token Bearer en header Authorization. |
-| `ValidateCustomerStoreMiddleware` | `POST /api/customers` | Valida campos obligatorios, existencia de region/commune y relación entre ellas. |
-| `ValidateCustomerQueryMiddleware` | `GET /api/customers` | Valida que se envíe al menos `dni` o `email` como query param. |
-| `ValidateCustomerDeleteMiddleware` | `DELETE /api/customers/{dni}` | Valida que el parámetro `dni` esté presente. |
+
+### Form Requests (validación)
+
+| Form Request | Ruta | Función |
+|--------------|------|---------|
+| `LoginRequest` | `POST /api/login` | Valida campos email y password. |
+| `StoreCustomerRequest` | `POST /api/customers` | Valida campos obligatorios, existencia de region/commune y relación entre ellas. |
+| `ShowCustomerRequest` | `GET /api/customers` | Valida que se envíe al menos `dni` o `email` como query param. |
 
 ---
 
@@ -233,6 +243,40 @@ Cuando un token vence, el `TokenMiddleware` lo marca automáticamente como inact
   "message": "Token vencido."
 }
 ```
+
+---
+
+## API Tester
+
+El proyecto incluye una interfaz web para probar los endpoints de la API, similar a Postman o Insomnia. Para acceder:
+
+1. Inicia el servidor de desarrollo:
+```bash
+php artisan serve
+```
+
+2. Abre en el navegador: `http://localhost:8000`
+
+### Características del API Tester
+
+- Panel lateral con todos los endpoints disponibles
+- Formulario dinámico según el endpoint seleccionado
+- Autenticación automática (el token se obtiene al hacer login)
+- Respuestas con syntax highlighting para JSON
+- Indicador de status code y tiempo de respuesta
+- Diseño dark mode responsive
+
+### Endpoints disponibles en el tester
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/api/login` | Login y obtención de token |
+| `POST` | `/api/customers` | Registrar nuevo cliente |
+| `GET` | `/api/customers` | Consultar cliente por DNI o email |
+| `DELETE` | `/api/customers/{dni}` | Eliminar cliente (lógico) |
+| `GET` | `/api/regions` | Obtener regiones con comunas |
+
+> **Tip:** Usa el endpoint `GET /api/regions` primero para obtener los IDs de regiones y comunas válidos antes de crear un cliente.
 
 ---
 
@@ -294,6 +338,31 @@ curl -X GET "http://localhost:8000/api/customers?email=cliente@test.com" \
   -H "Authorization: Bearer <token>"
 ```
 
+### Obtener regiones con comunas
+
+```bash
+curl -X GET http://localhost:8000/api/regions \
+  -H "Authorization: Bearer <token>"
+
+# Respuesta
+{
+  "success": true,
+  "data": [
+    {
+      "id_reg": 1,
+      "description": "Región Metropolitana de Santiago",
+      "communes": [
+        {"id_com": 1, "description": "Santiago"},
+        {"id_com": 2, "description": "Providencia"},
+        {"id_com": 3, "description": "Las Condes"}
+      ]
+    }
+  ]
+}
+```
+
+> **Nota:** Este endpoint es útil para obtener los IDs válidos de regiones y comunas antes de crear un cliente.
+
 ### Eliminar cliente (lógico)
 
 ```bash
@@ -344,20 +413,26 @@ curl -X POST http://localhost:8000/api/customers \
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── AuthController.php
-│   │   │   └── CustomerController.php
-│   │   └── Middleware/
-│   │       ├── LoggingMiddleware.php
-│   │       ├── MethodMiddleware.php
-│   │       ├── TokenMiddleware.php
-│   │       ├── ValidateCustomerStoreMiddleware.php
-│   │       ├── ValidateCustomerQueryMiddleware.php
-│   │       └── ValidateCustomerDeleteMiddleware.php
-│   └── Models/
-│       ├── Commune.php
-│       ├── Customer.php
-│       ├── Log.php
-│       ├── Region.php
-│       └── Token.php
+│   │   │   ├── CustomerController.php
+│   │   │   └── RegionController.php
+│   │   ├── Middleware/
+│   │   │   ├── LoggingMiddleware.php
+│   │   │   ├── MethodMiddleware.php
+│   │   │   └── TokenMiddleware.php
+│   │   └── Requests/
+│   │       ├── LoginRequest.php
+│   │       ├── StoreCustomerRequest.php
+│   │       └── ShowCustomerRequest.php
+│   ├── Models/
+│   │   ├── Commune.php
+│   │   ├── Customer.php
+│   │   ├── Log.php
+│   │   ├── Region.php
+│   │   └── Token.php
+│   └── Services/
+│       ├── AuthService.php
+│       ├── CustomerService.php
+│       └── RegionService.php
 ├── bootstrap/
 │   └── app.php
 ├── config/
@@ -366,6 +441,10 @@ curl -X POST http://localhost:8000/api/customers \
 │   ├── factories/
 │   ├── migrations/
 │   └── seeders/
+│       └── CustomerSeeder.php
+├── resources/
+│   └── views/
+│       └── api-tester.blade.php
 ├── routes/
 │   ├── api.php
 │   └── web.php

@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\RegionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('token')->group(function () {
+    Route::get('/regions', [RegionController::class, 'index']);
+
     Route::post('/customers', [CustomerController::class, 'store']);
 
     Route::get('/customers', [CustomerController::class, 'show']);
