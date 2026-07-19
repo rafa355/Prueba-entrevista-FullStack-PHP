@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Commune extends Model
 {
     protected $table = 'communes';
+
     protected $primaryKey = 'id_com';
+
     public $incrementing = true;
+
     protected $keyType = 'int';
+
     public $timestamps = false;
 
     protected function casts(): array

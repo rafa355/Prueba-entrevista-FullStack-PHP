@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Region extends Model
 {
     protected $table = 'regions';
+
     protected $primaryKey = 'id_reg';
+
     public $incrementing = true;
+
     protected $keyType = 'int';
+
     public $timestamps = false;
 
     protected function casts(): array
