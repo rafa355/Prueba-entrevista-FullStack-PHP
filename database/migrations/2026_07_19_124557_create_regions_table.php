@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('regions', function (Blueprint $table) {
             $table->increments('id_reg');
-            $table->string('description');
+            $table->string('description', 90);
             $table->enum('status', ['A', 'I', 'trash'])->default('A');
             $table->engine = 'MyISAM';
         });

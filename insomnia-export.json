@@ -1,0 +1,292 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_source": "insomnia.desktop",
+  "__export_date": "2026-07-19T00:00:00.000Z",
+  "resources": [
+    {
+      "_id": "wrk_customer_api",
+      "_type": "workspace",
+      "name": "Customer Management API",
+      "description": "API RESTful para gestión de clientes",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_customer_api",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8000/api",
+        "token": ""
+      }
+    },
+    {
+      "_id": "env_local",
+      "_type": "environment",
+      "parentId": "env_base",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8000/api"
+      }
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_customer_api",
+      "name": "Auth"
+    },
+    {
+      "_id": "fld_customers",
+      "_type": "request_group",
+      "parentId": "wrk_customer_api",
+      "name": "Customers"
+    },
+    {
+      "_id": "fld_regions",
+      "_type": "request_group",
+      "parentId": "wrk_customer_api",
+      "name": "Regions"
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"cliente@test.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "authentication": {}
+    },
+    {
+      "_id": "req_get_regions",
+      "_type": "request",
+      "parentId": "fld_regions",
+      "name": "Get Regions",
+      "method": "GET",
+      "url": "{{ _.base_url }}/regions",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_all_customers",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Get All Customers",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers/all",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_store_customer",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Create Customer",
+      "method": "POST",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"dni\": \"11111111\",\n  \"id_reg\": 1,\n  \"id_com\": 1,\n  \"email\": \"nuevo@test.com\",\n  \"password\": \"123456\",\n  \"name\": \"Juan\",\n  \"last_name\": \"Pérez\",\n  \"address\": \"Av. Principal 123\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_customer_dni",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Get Customer by DNI",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers?dni=12345678",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_customer_email",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Get Customer by Email",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers?email=cliente@test.com",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_delete_customer",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Delete Customer",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/customers/12345678",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_login_no_email",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login - Credenciales incorrectas",
+      "method": "POST",
+      "url": "{{ _.base_url }}/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"noexiste@test.com\",\n  \"password\": \"wrongpassword\"\n}"
+      },
+      "authentication": {}
+    },
+    {
+      "_id": "req_store_customer_duplicate",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Create Customer - DNI Duplicado",
+      "method": "POST",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"dni\": \"12345678\",\n  \"id_reg\": 1,\n  \"id_com\": 1,\n  \"email\": \"otro@test.com\",\n  \"password\": \"123456\",\n  \"name\": \"Juan\",\n  \"last_name\": \"Pérez\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_store_customer_invalid_commune",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Create Customer - Comuna no pertenece a Región",
+      "method": "POST",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"dni\": \"99999999\",\n  \"id_reg\": 1,\n  \"id_com\": 4,\n  \"email\": \"test@test.com\",\n  \"password\": \"123456\",\n  \"name\": \"Test\",\n  \"last_name\": \"User\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_store_customer_missing_fields",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Create Customer - Campos obligatorios faltantes",
+      "method": "POST",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"dni\": \"55555555\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_customer_not_found",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Get Customer - No encontrado",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers?dni=00000000",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_customer_no_params",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Get Customer - Sin parámetros",
+      "method": "GET",
+      "url": "{{ _.base_url }}/customers",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_delete_customer_not_exists",
+      "_type": "request",
+      "parentId": "fld_customers",
+      "name": "Delete Customer - No existe",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/customers/00000000",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_get_regions_no_auth",
+      "_type": "request",
+      "parentId": "fld_regions",
+      "name": "Get Regions - Sin autenticación",
+      "method": "GET",
+      "url": "{{ _.base_url }}/regions",
+      "headers": [],
+      "authentication": {}
+    }
+  ]
+}

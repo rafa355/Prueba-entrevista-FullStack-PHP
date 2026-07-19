@@ -10,6 +10,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('token')->group(function () {
     Route::get('/regions', [RegionController::class, 'index']);
 
+    Route::get('/customers/all', [CustomerController::class, 'index']);
+
     Route::post('/customers', [CustomerController::class, 'store']);
 
     Route::get('/customers', [CustomerController::class, 'show']);

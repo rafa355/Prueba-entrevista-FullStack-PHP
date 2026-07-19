@@ -10,13 +10,18 @@ class Commune extends Model
 {
     protected $table = 'communes';
 
-    protected $primaryKey = 'id_com';
-
     public $incrementing = true;
 
     protected $keyType = 'int';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_com',
+        'id_reg',
+        'description',
+        'status',
+    ];
 
     protected function casts(): array
     {

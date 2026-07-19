@@ -13,6 +13,11 @@ class CustomerController extends Controller
         private readonly CustomerService $customerService,
     ) {}
 
+    public function index(): JsonResponse
+    {
+        return $this->customerService->index();
+    }
+
     public function store(StoreCustomerRequest $request): JsonResponse
     {
         return $this->customerService->store($request);

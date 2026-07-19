@@ -426,6 +426,10 @@
                         <span class="method-badge method-get">GET</span>
                         <span class="endpoint-path">/api/regions</span>
                     </div>
+                    <div class="endpoint-item" data-endpoint="customersAll">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-path">/api/customers/all</span>
+                    </div>
                 </div>
             </aside>
 
@@ -527,6 +531,12 @@
                                 <p style="font-size: 13px; color: var(--text-muted);">No parameters required. Click Send to fetch regions.</p>
                             </div>
                         </div>
+
+                        <div id="formCustomersAll" class="hidden">
+                            <div class="empty-state" style="min-height: 80px;">
+                                <p style="font-size: 13px; color: var(--text-muted);">No parameters required. Click Send to fetch all customers.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -570,13 +580,15 @@
             document.getElementById('formShow').classList.toggle('hidden', currentEndpoint !== 'show');
             document.getElementById('formDelete').classList.toggle('hidden', currentEndpoint !== 'delete');
             document.getElementById('formRegions').classList.toggle('hidden', currentEndpoint !== 'regions');
+            document.getElementById('formCustomersAll').classList.toggle('hidden', currentEndpoint !== 'customersAll');
 
             const titles = {
                 login: 'POST /api/login',
                 store: 'POST /api/customers',
                 show: 'GET /api/customers',
                 delete: 'DELETE /api/customers/{dni}',
-                regions: 'GET /api/regions'
+                regions: 'GET /api/regions',
+                customersAll: 'GET /api/customers/all'
             };
             document.getElementById('requestTitle').textContent = titles[currentEndpoint];
         }
@@ -647,6 +659,12 @@
 
                     case 'regions':
                         response = await fetch(`${API_BASE}/regions`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+                        break;
+
+                    case 'customersAll':
+                        response = await fetch(`${API_BASE}/customers/all`, {
                             headers: { 'Authorization': `Bearer ${authToken}` }
                         });
                         break;

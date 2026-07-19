@@ -18,13 +18,13 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'dni' => 'required|string|max:20|unique:customers,dni',
+            'dni' => 'required|string|max:45|unique:customers,dni',
             'id_reg' => 'required|integer',
             'id_com' => 'required|integer',
-            'email' => 'required|email|max:191|unique:customers,email',
+            'email' => 'required|email|max:120|unique:customers,email',
             'password' => 'required|string',
-            'name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:45',
+            'last_name' => 'required|string|max:45',
             'address' => 'nullable|string|max:255',
         ];
     }

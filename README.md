@@ -169,8 +169,9 @@ DB_PASSWORD=root
 |--------|----------|-------------|---------------|
 | `POST` | `/api/login` | Login y generación de token | No |
 | `GET` | `/api/regions` | Obtener regiones con comunas asociadas | Sí (Bearer token) |
+| `GET` | `/api/customers/all` | Obtener todos los clientes activos | Sí (Bearer token) |
 | `POST` | `/api/customers` | Registrar cliente | Sí (Bearer token) |
-| `GET` | `/api/customers` | Consultar cliente | Sí (Bearer token) |
+| `GET` | `/api/customers` | Consultar cliente por DNI o email | Sí (Bearer token) |
 | `DELETE` | `/api/customers/{dni}` | Eliminar cliente (lógico) | Sí (Bearer token) |
 
 > **Nota:** El endpoint `GET /api/regions` retorna todas las regiones activas con sus comunas asociadas. Esta información es necesaria para obtener los `id_reg` e `id_com` válidos al momento de crear un cliente.
@@ -271,10 +272,11 @@ php artisan serve
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `POST` | `/api/login` | Login y obtención de token |
+| `GET` | `/api/regions` | Obtener regiones con comunas |
+| `GET` | `/api/customers/all` | Obtener todos los clientes activos |
 | `POST` | `/api/customers` | Registrar nuevo cliente |
 | `GET` | `/api/customers` | Consultar cliente por DNI o email |
 | `DELETE` | `/api/customers/{dni}` | Eliminar cliente (lógico) |
-| `GET` | `/api/regions` | Obtener regiones con comunas |
 
 > **Tip:** Usa el endpoint `GET /api/regions` primero para obtener los IDs de regiones y comunas válidos antes de crear un cliente.
 
@@ -309,6 +311,29 @@ curl -X POST http://localhost:8000/api/customers \
     "name": "Juan",
     "last_name": "Pérez"
   }
+}
+```
+
+### Obtener todos los clientes
+
+```bash
+curl -X GET http://localhost:8000/api/customers/all \
+  -H "Authorization: Bearer <token>"
+
+# Respuesta
+{
+  "success": true,
+  "data": [
+    {
+      "dni": "12345678",
+      "email": "cliente@test.com",
+      "name": "Juan",
+      "last_name": "Pérez",
+      "address": "Av. Principal 123",
+      "region": "Región Metropolitana de Santiago",
+      "commune": "Santiago"
+    }
+  ]
 }
 ```
 

@@ -8,6 +8,32 @@ use Illuminate\Http\Request;
 
 class CustomerService
 {
+    public function index(): JsonResponse
+    {
+        $customers = Customer::where('status', 'A')
+            ->with([
+                'region:id_reg,description',
+                'commune:id_com,description',
+            ])
+            ->get()
+            ->map(function ($customer) {
+                return [
+                    'dni' => $customer->dni,
+                    'email' => $customer->email,
+                    'name' => $customer->name,
+                    'last_name' => $customer->last_name,
+                    'address' => $customer->address,
+                    'region' => $customer->region->description,
+                    'commune' => $customer->commune->description,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $customers,
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $customer = Customer::create([
@@ -69,7 +95,7 @@ class CustomerService
 
     public function destroy(string $dni): JsonResponse
     {
-        $customer = Customer::find($dni);
+        $customer = Customer::where('dni', $dni)->first();
 
         if (! $customer) {
             return response()->json([
@@ -85,7 +111,10 @@ class CustomerService
             ], 404);
         }
 
-        $customer->update(['status' => 'trash']);
+        Customer::where('dni', $dni)
+            ->where('id_reg', $customer->id_reg)
+            ->where('id_com', $customer->id_com)
+            ->update(['status' => 'trash']);
 
         return response()->json([
             'success' => true,

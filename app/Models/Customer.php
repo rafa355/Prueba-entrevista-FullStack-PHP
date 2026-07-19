@@ -9,8 +9,6 @@ class Customer extends Model
 {
     protected $table = 'customers';
 
-    protected $primaryKey = 'dni';
-
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -41,6 +39,11 @@ class Customer extends Model
             'date_reg' => 'datetime',
             'status' => 'string',
         ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'dni';
     }
 
     public function region(): BelongsTo
