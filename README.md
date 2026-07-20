@@ -108,29 +108,29 @@ DB_PASSWORD=root
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id_reg` | INT UNSIGNED AI | PK |
-| `description` | VARCHAR(255) | Nombre de la región |
+| `description` | VARCHAR(90) | Nombre de la región |
 | `status` | ENUM('A','I','trash') | Estado (default: 'A') |
 
 #### `communes`
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `id_com` | INT UNSIGNED AI | PK |
-| `id_reg` | INT UNSIGNED | FK → regions.id_reg |
-| `description` | VARCHAR(255) | Nombre de la comuna |
+| `id_com` | INT UNSIGNED AI | PK (junto con id_reg) |
+| `id_reg` | INT UNSIGNED | PK (junto con id_com), FK → regions.id_reg |
+| `description` | VARCHAR(90) | Nombre de la comuna |
 | `status` | ENUM('A','I','trash') | Estado (default: 'A') |
 
 #### `customers`
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `dni` | VARCHAR(20) | PK (Documento de identidad) |
-| `id_reg` | INT UNSIGNED | FK → regions.id_reg |
-| `id_com` | INT UNSIGNED | FK → communes.id_com |
-| `email` | VARCHAR(191) | UNIQUE |
+| `dni` | VARCHAR(45) | PK (Documento de identidad, junto con id_reg e id_com) |
+| `id_reg` | INT UNSIGNED | PK (junto con dni e id_com), FK → regions.id_reg |
+| `id_com` | INT UNSIGNED | PK (junto con dni e id_reg), FK → communes.id_com |
+| `email` | VARCHAR(120) | UNIQUE |
 | `password` | VARCHAR(255) | Hash bcrypt |
-| `name` | VARCHAR(255) | Nombre |
-| `last_name` | VARCHAR(255) | Apellido |
+| `name` | VARCHAR(45) | Nombre |
+| `last_name` | VARCHAR(45) | Apellido |
 | `address` | VARCHAR(255) | Nullable |
 | `date_reg` | DATETIME | Fecha de registro |
 | `status` | ENUM('A','I','trash') | Estado (default: 'A') |
@@ -154,9 +154,9 @@ DB_PASSWORD=root
 | `method` | VARCHAR(10) | HTTP method |
 | `url` | VARCHAR(255) | URL completa |
 | `ip` | VARCHAR(45) | IP del cliente |
-| `request_body` | TEXT | Body sanitizado (sin password/token) |
-| `response_status` | SMALLINT | HTTP status code |
-| `response_body` | TEXT | Respuesta (max 1000 chars) |
+| `request_body` | TEXT nullable | Body sanitizado (sin password/token) |
+| `response_status` | SMALLINT UNSIGNED nullable | HTTP status code |
+| `response_body` | TEXT nullable | Respuesta (max 1000 chars) |
 | `created_at` | DATETIME | Timestamp del log |
 
 ---
